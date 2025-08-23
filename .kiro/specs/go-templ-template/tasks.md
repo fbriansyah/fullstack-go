@@ -9,7 +9,11 @@
   - _Requirements: 1.1, 7.2_
 
 - [ ] 2. Implement core event infrastructure
-  - [ ] 2.1 Create event bus interfaces and domain event contracts
+  - [x] 2.1 Create event bus interfaces and domain event contracts
+
+
+
+
     - Define EventBus, DomainEvent, and EventHandler interfaces
     - Create base event types and event metadata structures
     - _Requirements: 1.1_
