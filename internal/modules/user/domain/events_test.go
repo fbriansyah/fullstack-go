@@ -12,11 +12,11 @@ import (
 func TestBaseEvent_Methods(t *testing.T) {
 	now := time.Now().UTC()
 	event := BaseEvent{
-		ID:          "event-123",
-		Type:        "test.event",
-		AggregateId: "aggregate-123",
-		OccurredOn:  now,
-		Version:     1,
+		ID:           "event-123",
+		Type:         "test.event",
+		AggregateId:  "aggregate-123",
+		OccurredOn:   now,
+		EventVersion: 1,
 	}
 
 	assert.Equal(t, "test.event", event.EventType())

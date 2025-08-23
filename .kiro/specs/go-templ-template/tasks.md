@@ -52,15 +52,24 @@
     - Write repository integration tests with test database
     - _Requirements: 4.1, 4.4_
 
-- [ ] 5. Implement User module application layer
-  - [ ] 5.1 Create User commands and use cases
+- [x] 5. Implement User module application layer
+
+
+
+
+
+  - [x] 5.1 Create User commands and use cases
+
+
     - Define CreateUserCommand, UpdateUserCommand, and DeleteUserCommand
     - Implement UserService with business logic and event publishing
     - Add input validation and business rule enforcement
     - Write service unit tests with mocked dependencies
     - _Requirements: 3.1, 3.2_
 
-  - [ ] 5.2 Create User HTTP handlers and routes
+  - [x] 5.2 Create User HTTP handlers and routes
+
+
     - Implement user registration, profile, and management endpoints
     - Add request/response DTOs and validation middleware
     - Integrate with UserService and handle errors properly
