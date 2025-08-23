@@ -1,4 +1,4 @@
-.PHONY: help build run test clean docker-up docker-down install-deps templ-generate
+.PHONY: help build run test clean docker-up docker-down install-deps templ-generate migrate-up migrate-down migrate-version db-health
 
 # Default target
 help:
@@ -11,6 +11,10 @@ help:
 	@echo "  docker-down    - Stop Docker services"
 	@echo "  install-deps   - Install dependencies"
 	@echo "  templ-generate - Generate Go code from Templ files"
+	@echo "  migrate-up     - Run database migrations up"
+	@echo "  migrate-down   - Run database migrations down"
+	@echo "  migrate-version - Show current migration version"
+	@echo "  db-health      - Check database health"
 
 # Install dependencies
 install-deps:
@@ -58,3 +62,26 @@ docker-build:
 
 docker-run: docker-build
 	docker-compose up
+
+# Database migration commands
+migrate-up:
+	go run ./cmd/migrate -action=up
+
+migrate-down:
+	go run ./cmd/migrate -action=down
+
+migrate-version:
+	go run ./cmd/migrate -action=version
+
+migrate-steps:
+	go run ./cmd/migrate -action=steps -steps=$(STEPS)
+
+# Database health check
+db-health:
+	go run ./cmd/dbhealth
+
+db-health-json:
+	go run ./cmd/dbhealth -format=json
+
+db-wait:
+	go run ./cmd/dbhealth -wait -timeout=30s
