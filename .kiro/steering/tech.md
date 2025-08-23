@@ -2,7 +2,7 @@
 
 ## Backend
 - **Language**: Go 1.21+
-- **Web Framework**: Gin, Echo, or standard net/http
+- **Web Framework**: Echo
 - **Database**: PostgreSQL with SQLx
 - **Message Broker**: RabbitMQ for event-driven communication
 - **Authentication**: Session-based auth with secure cookies
