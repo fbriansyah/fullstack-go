@@ -38,7 +38,11 @@
     - _Requirements: 4.1, 4.4_
 
 - [ ] 4. Implement User module domain layer
-  - [ ] 4.1 Create User domain models and aggregates
+  - [x] 4.1 Create User domain models and aggregates
+
+
+
+
     - Define User aggregate with proper validation
     - Implement UserStatus enum and business rules
     - Create user domain events (UserCreated, UserUpdated, UserDeleted)
