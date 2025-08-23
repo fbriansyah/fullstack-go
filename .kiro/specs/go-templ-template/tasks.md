@@ -22,19 +22,16 @@
     - Write unit tests for event bus functionality
     - _Requirements: 1.1_
 
-- [ ] 3. Create shared database infrastructure
+- [x] 3. Create shared database infrastructure
+
   - [x] 3.1 Set up database connection and SQLx configuration
-
-
-
-
-
     - Implement database connection with connection pooling using SQLx
     - Create migration runner using golang-migrate and base migration structure
     - Write database health check utilities and connection validation
     - _Requirements: 4.1, 4.3_
 
-  - [ ] 3.2 Create base repository patterns and shared utilities
+  - [x] 3.2 Create base repository patterns and shared utilities
+
     - Implement generic repository interface with CRUD operations using SQLx
     - Create transaction management utilities with proper rollback handling
     - Write database integration tests with test database setup
