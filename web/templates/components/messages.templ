@@ -1,0 +1,233 @@
+package components
+
+// ErrorMessage displays a single error message with red styling
+templ ErrorMessage(message string) {
+	<div class="mt-1 text-sm text-red-600 flex items-center">
+		<svg class="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+			<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+		</svg>
+		<span>{ message }</span>
+	</div>
+}
+
+// SuccessMessage displays a success message with green styling
+templ SuccessMessage(message string) {
+	<div class="rounded-md bg-green-50 p-4 mb-4">
+		<div class="flex">
+			<div class="flex-shrink-0">
+				<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-3">
+				<p class="text-sm font-medium text-green-800">
+					{ message }
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+// WarningMessage displays a warning message with yellow styling
+templ WarningMessage(message string) {
+	<div class="rounded-md bg-yellow-50 p-4 mb-4">
+		<div class="flex">
+			<div class="flex-shrink-0">
+				<svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-3">
+				<p class="text-sm font-medium text-yellow-800">
+					{ message }
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+// InfoMessage displays an informational message with blue styling
+templ InfoMessage(message string) {
+	<div class="rounded-md bg-blue-50 p-4 mb-4">
+		<div class="flex">
+			<div class="flex-shrink-0">
+				<svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-3">
+				<p class="text-sm font-medium text-blue-800">
+					{ message }
+				</p>
+			</div>
+		</div>
+	</div>
+}
+
+// ErrorAlert displays a prominent error alert with dismiss functionality
+templ ErrorAlert(title string, message string, dismissible bool) {
+	<div class="rounded-md bg-red-50 p-4 mb-4" id="error-alert">
+		<div class="flex">
+			<div class="flex-shrink-0">
+				<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-3 flex-1">
+				<h3 class="text-sm font-medium text-red-800">
+					{ title }
+				</h3>
+				<div class="mt-2 text-sm text-red-700">
+					<p>{ message }</p>
+				</div>
+			</div>
+			if dismissible {
+				<div class="ml-auto pl-3">
+					<div class="-mx-1.5 -my-1.5">
+						<button 
+							type="button" 
+							class="inline-flex bg-red-50 rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600"
+							onclick="document.getElementById('error-alert').remove()"
+						>
+							<span class="sr-only">Dismiss</span>
+							<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+								<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+							</svg>
+						</button>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// SuccessAlert displays a prominent success alert with dismiss functionality
+templ SuccessAlert(title string, message string, dismissible bool) {
+	<div class="rounded-md bg-green-50 p-4 mb-4" id="success-alert">
+		<div class="flex">
+			<div class="flex-shrink-0">
+				<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+				</svg>
+			</div>
+			<div class="ml-3 flex-1">
+				<h3 class="text-sm font-medium text-green-800">
+					{ title }
+				</h3>
+				<div class="mt-2 text-sm text-green-700">
+					<p>{ message }</p>
+				</div>
+			</div>
+			if dismissible {
+				<div class="ml-auto pl-3">
+					<div class="-mx-1.5 -my-1.5">
+						<button 
+							type="button" 
+							class="inline-flex bg-green-50 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600"
+							onclick="document.getElementById('success-alert').remove()"
+						>
+							<span class="sr-only">Dismiss</span>
+							<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+								<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+							</svg>
+						</button>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+// ValidationSummary displays a list of validation errors
+templ ValidationSummary(errors []string) {
+	if len(errors) > 0 {
+		<div class="rounded-md bg-red-50 p-4 mb-4">
+			<div class="flex">
+				<div class="flex-shrink-0">
+					<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+					</svg>
+				</div>
+				<div class="ml-3">
+					<h3 class="text-sm font-medium text-red-800">
+						Please correct the following errors:
+					</h3>
+					<div class="mt-2 text-sm text-red-700">
+						<ul class="list-disc pl-5 space-y-1">
+							for _, error := range errors {
+								<li>{ error }</li>
+							}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+// FlashMessage displays a temporary message that can be dismissed
+templ FlashMessage(messageType string, message string) {
+	<div 
+		class={ 
+			"rounded-md p-4 mb-4 flash-message",
+			templ.KV("bg-green-50", messageType == "success"),
+			templ.KV("bg-red-50", messageType == "error"),
+			templ.KV("bg-yellow-50", messageType == "warning"),
+			templ.KV("bg-blue-50", messageType == "info")
+		}
+		id="flash-message"
+	>
+		<div class="flex">
+			<div class="flex-shrink-0">
+				if messageType == "success" {
+					<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+					</svg>
+				} else if messageType == "error" {
+					<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+					</svg>
+				} else if messageType == "warning" {
+					<svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+					</svg>
+				} else {
+					<svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+					</svg>
+				}
+			</div>
+			<div class="ml-3 flex-1">
+				<p class={ 
+					"text-sm font-medium",
+					templ.KV("text-green-800", messageType == "success"),
+					templ.KV("text-red-800", messageType == "error"),
+					templ.KV("text-yellow-800", messageType == "warning"),
+					templ.KV("text-blue-800", messageType == "info")
+				}>
+					{ message }
+				</p>
+			</div>
+			<div class="ml-auto pl-3">
+				<div class="-mx-1.5 -my-1.5">
+					<button 
+						type="button" 
+						class={ 
+							"inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2",
+							templ.KV("bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600", messageType == "success"),
+							templ.KV("bg-red-50 text-red-500 hover:bg-red-100 focus:ring-offset-red-50 focus:ring-red-600", messageType == "error"),
+							templ.KV("bg-yellow-50 text-yellow-500 hover:bg-yellow-100 focus:ring-offset-yellow-50 focus:ring-yellow-600", messageType == "warning"),
+							templ.KV("bg-blue-50 text-blue-500 hover:bg-blue-100 focus:ring-offset-blue-50 focus:ring-blue-600", messageType == "info")
+						}
+						onclick="document.getElementById('flash-message').remove()"
+					>
+						<span class="sr-only">Dismiss</span>
+						<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}

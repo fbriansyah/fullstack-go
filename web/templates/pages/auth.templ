@@ -1,0 +1,70 @@
+package pages
+
+import (
+	"go-templ-template/web/templates/layouts"
+	"go-templ-template/web/templates/components"
+)
+
+// LoginPage renders the login page
+templ LoginPage(errors map[string]string, email string, flashMessage string, flashType string) {
+	@layouts.Base("Sign In - Go Templ Template", loginPageContent(errors, email, flashMessage, flashType))
+}
+
+templ loginPageContent(errors map[string]string, email string, flashMessage string, flashType string) {
+	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			if flashMessage != "" {
+				@components.FlashMessage(flashType, flashMessage)
+			}
+			@components.LoginForm(errors, email)
+		</div>
+	</div>
+}
+
+// RegisterPage renders the registration page
+templ RegisterPage(errors map[string]string, formData components.RegisterFormData, flashMessage string, flashType string) {
+	@layouts.Base("Create Account - Go Templ Template", registerPageContent(errors, formData, flashMessage, flashType))
+}
+
+templ registerPageContent(errors map[string]string, formData components.RegisterFormData, flashMessage string, flashType string) {
+	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			if flashMessage != "" {
+				@components.FlashMessage(flashType, flashMessage)
+			}
+			@components.RegisterForm(errors, formData)
+		</div>
+	</div>
+}
+
+// ForgotPasswordPage renders the forgot password page
+templ ForgotPasswordPage(errors map[string]string, email string, flashMessage string, flashType string) {
+	@layouts.Base("Forgot Password - Go Templ Template", forgotPasswordPageContent(errors, email, flashMessage, flashType))
+}
+
+templ forgotPasswordPageContent(errors map[string]string, email string, flashMessage string, flashType string) {
+	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			if flashMessage != "" {
+				@components.FlashMessage(flashType, flashMessage)
+			}
+			@components.ForgotPasswordForm(errors, email)
+		</div>
+	</div>
+}
+
+// ResetPasswordPage renders the reset password page
+templ ResetPasswordPage(errors map[string]string, token string, flashMessage string, flashType string) {
+	@layouts.Base("Reset Password - Go Templ Template", resetPasswordPageContent(errors, token, flashMessage, flashType))
+}
+
+templ resetPasswordPageContent(errors map[string]string, token string, flashMessage string, flashType string) {
+	<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8">
+			if flashMessage != "" {
+				@components.FlashMessage(flashType, flashMessage)
+			}
+			@components.ResetPasswordForm(errors, token)
+		</div>
+	</div>
+}
