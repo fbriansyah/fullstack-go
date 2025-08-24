@@ -68,7 +68,7 @@
     - _Requirements: 1.3, 3.1, 3.2_
 
 - [ ] 6. Implement Auth module domain layer
-  - [ ] 6.1 Create Session domain models and authentication logic
+  - [x] 6.1 Create Session domain models and authentication logic
     - Define Session aggregate with expiration and security features
     - Implement password hashing and validation utilities
     - Create auth domain events (UserLoggedIn, UserRegistered, UserLoggedOut)
