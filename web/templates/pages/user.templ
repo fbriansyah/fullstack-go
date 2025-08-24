@@ -1,0 +1,316 @@
+package pages
+
+import (
+	"go-templ-template/web/templates/components"
+	"go-templ-template/web/templates/layouts"
+)
+
+// UserProfilePage displays the user profile page
+templ UserProfilePage(user components.User) {
+	@layouts.Base("Profile - " + user.FirstName + " " + user.LastName, UserProfileContent(user))
+}
+
+templ UserProfileContent(user components.User) {
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Breadcrumb -->
+		@components.Breadcrumb([]components.BreadcrumbItem{
+			{Text: "Dashboard", Href: "/dashboard"},
+			{Text: "Profile", Href: ""},
+		})
+		
+		@components.UserProfile(user)
+	</div>
+}
+
+// UserDashboardPage displays the user dashboard
+templ UserDashboardPage(user components.User, stats components.DashboardStats) {
+	@layouts.Base("Dashboard - " + user.FirstName, UserDashboardContent(user, stats))
+}
+
+templ UserDashboardContent(user components.User, stats components.DashboardStats) {
+	@components.UserDashboard(user, stats)
+}
+
+// UserEditPage displays the user edit form
+templ UserEditPage(user components.User, errors map[string]string) {
+	@layouts.Base("Edit Profile - " + user.FirstName, UserEditContent(user, errors))
+}
+
+templ UserEditContent(user components.User, errors map[string]string) {
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Breadcrumb -->
+		@components.Breadcrumb([]components.BreadcrumbItem{
+			{Text: "Dashboard", Href: "/dashboard"},
+			{Text: "Profile", Href: "/profile"},
+			{Text: "Edit", Href: ""},
+		})
+		
+		@components.UserEditForm(user, errors)
+	</div>
+}
+
+// UserListPage displays the user management page
+templ UserListPage(users []components.User, currentPage int, totalPages int, searchQuery string) {
+	@layouts.Base("User Management", UserListContent(users, currentPage, totalPages, searchQuery))
+}
+
+templ UserListContent(users []components.User, currentPage int, totalPages int, searchQuery string) {
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Breadcrumb -->
+		@components.Breadcrumb([]components.BreadcrumbItem{
+			{Text: "Dashboard", Href: "/dashboard"},
+			{Text: "Administration", Href: "/admin"},
+			{Text: "Users", Href: ""},
+		})
+		
+		<!-- Page Header with Search -->
+		<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+			<div>
+				<h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+				<p class="text-gray-600 mt-2">Manage user accounts and permissions.</p>
+			</div>
+			<div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+				@components.SearchBox("Search users...", searchQuery, "search")
+				<a href="/admin/users/create" class="btn-primary whitespace-nowrap">
+					<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+					</svg>
+					Add User
+				</a>
+			</div>
+		</div>
+		
+		<!-- Users Content -->
+		if len(users) > 0 {
+			@components.UserList(users, currentPage, totalPages)
+		} else {
+			@components.EmptyState("No users found", "Get started by creating your first user account.", "Add New User", "/admin/users/create")
+		}
+		
+		<!-- Confirmation Modal -->
+		@components.ConfirmationDialog()
+	</div>
+}
+
+// UserSettingsPage displays user account settings
+templ UserSettingsPage(user components.User, activeTab string) {
+	@layouts.Base("Account Settings - " + user.FirstName, UserSettingsContent(user, activeTab))
+}
+
+templ UserSettingsContent(user components.User, activeTab string) {
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Breadcrumb -->
+		@components.Breadcrumb([]components.BreadcrumbItem{
+			{Text: "Dashboard", Href: "/dashboard"},
+			{Text: "Profile", Href: "/profile"},
+			{Text: "Settings", Href: ""},
+		})
+		
+		<div class="max-w-4xl mx-auto">
+			<h1 class="text-3xl font-bold text-gray-900 mb-8">Account Settings</h1>
+			
+			<!-- Settings Tabs -->
+			@components.Tabs([]components.Tab{
+				{ID: "profile", Text: "Profile", Href: "/profile/settings?tab=profile"},
+				{ID: "security", Text: "Security", Href: "/profile/settings?tab=security"},
+				{ID: "notifications", Text: "Notifications", Href: "/profile/settings?tab=notifications"},
+				{ID: "privacy", Text: "Privacy", Href: "/profile/settings?tab=privacy"},
+			}, activeTab)
+			
+			<!-- Tab Content -->
+			if activeTab == "profile" {
+				@ProfileSettingsTab(user)
+			} else if activeTab == "security" {
+				@SecuritySettingsTab(user)
+			} else if activeTab == "notifications" {
+				@NotificationSettingsTab(user)
+			} else if activeTab == "privacy" {
+				@PrivacySettingsTab(user)
+			}
+		</div>
+	</div>
+}
+
+// ProfileSettingsTab displays profile settings
+templ ProfileSettingsTab(user components.User) {
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+		<!-- Profile Information -->
+		<div class="lg:col-span-2">
+			<div class="card">
+				<h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Information</h3>
+				<form method="POST" action="/profile/settings/profile" class="space-y-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label for="first_name" class="form-label">First Name</label>
+							<input type="text" id="first_name" name="first_name" value={ user.FirstName } class="form-input" required/>
+						</div>
+						<div>
+							<label for="last_name" class="form-label">Last Name</label>
+							<input type="text" id="last_name" name="last_name" value={ user.LastName } class="form-input" required/>
+						</div>
+					</div>
+					<div>
+						<label for="email" class="form-label">Email Address</label>
+						<input type="email" id="email" name="email" value={ user.Email } class="form-input" required/>
+					</div>
+					<div class="flex justify-end">
+						<button type="submit" class="btn-primary">Save Changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<!-- Profile Picture -->
+		<div>
+			<div class="card">
+				<h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Picture</h3>
+				<div class="text-center">
+					<div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+						<span class="text-2xl font-bold text-white">
+							{ string(user.FirstName[0]) }{ string(user.LastName[0]) }
+						</span>
+					</div>
+					<button type="button" class="btn-outline text-sm">
+						Change Picture
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// SecuritySettingsTab displays security settings
+templ SecuritySettingsTab(user components.User) {
+	<div class="space-y-8">
+		<!-- Change Password -->
+		<div class="card">
+			<h3 class="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
+			<form method="POST" action="/profile/settings/password" class="space-y-4">
+				<div>
+					<label for="current_password" class="form-label">Current Password</label>
+					<input type="password" id="current_password" name="current_password" class="form-input" required/>
+				</div>
+				<div>
+					<label for="new_password" class="form-label">New Password</label>
+					<input type="password" id="new_password" name="new_password" class="form-input" required/>
+				</div>
+				<div>
+					<label for="confirm_password" class="form-label">Confirm New Password</label>
+					<input type="password" id="confirm_password" name="confirm_password" class="form-input" required/>
+				</div>
+				<div class="flex justify-end">
+					<button type="submit" class="btn-primary">Update Password</button>
+				</div>
+			</form>
+		</div>
+		
+		<!-- Two-Factor Authentication -->
+		<div class="card">
+			<h3 class="text-lg font-semibold text-gray-900 mb-4">Two-Factor Authentication</h3>
+			<p class="text-gray-600 mb-4">Add an extra layer of security to your account.</p>
+			<div class="flex items-center justify-between">
+				<div>
+					<p class="font-medium text-gray-900">Two-Factor Authentication</p>
+					<p class="text-sm text-gray-500">Currently disabled</p>
+				</div>
+				<button type="button" class="btn-primary">Enable 2FA</button>
+			</div>
+		</div>
+		
+		<!-- Active Sessions -->
+		<div class="card">
+			<h3 class="text-lg font-semibold text-gray-900 mb-4">Active Sessions</h3>
+			<p class="text-gray-600 mb-4">Manage your active sessions across devices.</p>
+			<div class="space-y-3">
+				<div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+					<div>
+						<p class="font-medium text-gray-900">Current Session</p>
+						<p class="text-sm text-gray-500">Chrome on Windows • Active now</p>
+					</div>
+					<span class="text-sm text-green-600 font-medium">Current</span>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// NotificationSettingsTab displays notification preferences
+templ NotificationSettingsTab(user components.User) {
+	<div class="card">
+		<h3 class="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+		<form method="POST" action="/profile/settings/notifications" class="space-y-6">
+			<div>
+				<h4 class="text-base font-medium text-gray-900 mb-3">Email Notifications</h4>
+				<div class="space-y-3">
+					<label class="flex items-center">
+						<input type="checkbox" name="email_updates" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked/>
+						<span class="ml-2 text-sm text-gray-700">Account updates and security alerts</span>
+					</label>
+					<label class="flex items-center">
+						<input type="checkbox" name="email_marketing" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"/>
+						<span class="ml-2 text-sm text-gray-700">Marketing and promotional emails</span>
+					</label>
+				</div>
+			</div>
+			
+			<div>
+				<h4 class="text-base font-medium text-gray-900 mb-3">Push Notifications</h4>
+				<div class="space-y-3">
+					<label class="flex items-center">
+						<input type="checkbox" name="push_updates" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked/>
+						<span class="ml-2 text-sm text-gray-700">Important account updates</span>
+					</label>
+					<label class="flex items-center">
+						<input type="checkbox" name="push_reminders" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"/>
+						<span class="ml-2 text-sm text-gray-700">Reminders and tips</span>
+					</label>
+				</div>
+			</div>
+			
+			<div class="flex justify-end pt-4 border-t border-gray-200">
+				<button type="submit" class="btn-primary">Save Preferences</button>
+			</div>
+		</form>
+	</div>
+}
+
+// PrivacySettingsTab displays privacy settings
+templ PrivacySettingsTab(user components.User) {
+	<div class="space-y-8">
+		<!-- Privacy Settings -->
+		<div class="card">
+			<h3 class="text-lg font-semibold text-gray-900 mb-4">Privacy Settings</h3>
+			<form method="POST" action="/profile/settings/privacy" class="space-y-4">
+				<div>
+					<label class="flex items-center">
+						<input type="checkbox" name="profile_public" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"/>
+						<span class="ml-2 text-sm text-gray-700">Make my profile visible to other users</span>
+					</label>
+				</div>
+				<div>
+					<label class="flex items-center">
+						<input type="checkbox" name="activity_tracking" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked/>
+						<span class="ml-2 text-sm text-gray-700">Allow activity tracking for better experience</span>
+					</label>
+				</div>
+				<div class="flex justify-end">
+					<button type="submit" class="btn-primary">Save Settings</button>
+				</div>
+			</form>
+		</div>
+		
+		<!-- Data Export -->
+		<div class="card">
+			<h3 class="text-lg font-semibold text-gray-900 mb-4">Data Export</h3>
+			<p class="text-gray-600 mb-4">Download a copy of your data.</p>
+			<button type="button" class="btn-outline">Request Data Export</button>
+		</div>
+		
+		<!-- Account Deletion -->
+		<div class="card border-red-200">
+			<h3 class="text-lg font-semibold text-red-900 mb-4">Delete Account</h3>
+			<p class="text-red-600 mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
+			<button type="button" class="btn-danger" id="delete-account-btn">Delete Account</button>
+		</div>
+	</div>
+}
