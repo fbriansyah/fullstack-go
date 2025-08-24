@@ -1,0 +1,352 @@
+package components
+
+// LoginForm renders the login form component
+templ LoginForm(errors map[string]string, email string) {
+	<div class="card max-w-md mx-auto">
+		<div class="text-center mb-6">
+			<h2 class="text-2xl font-bold text-gray-900">Sign In</h2>
+			<p class="text-gray-600 mt-2">Welcome back! Please sign in to your account.</p>
+		</div>
+		
+		<form method="POST" action="/auth/login" class="space-y-4">
+			<!-- Email Field -->
+			<div>
+				<label for="email" class="form-label">Email Address</label>
+				<input 
+					type="email" 
+					id="email" 
+					name="email" 
+					value={ email }
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["email"] != "") }
+					placeholder="Enter your email"
+					required
+				/>
+				if errors["email"] != "" {
+					@ErrorMessage(errors["email"])
+				}
+			</div>
+			
+			<!-- Password Field -->
+			<div>
+				<label for="password" class="form-label">Password</label>
+				<input 
+					type="password" 
+					id="password" 
+					name="password" 
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["password"] != "") }
+					placeholder="Enter your password"
+					required
+				/>
+				if errors["password"] != "" {
+					@ErrorMessage(errors["password"])
+				}
+			</div>
+			
+			<!-- Remember Me -->
+			<div class="flex items-center">
+				<input 
+					type="checkbox" 
+					id="remember" 
+					name="remember" 
+					class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+				/>
+				<label for="remember" class="ml-2 block text-sm text-gray-700">
+					Remember me
+				</label>
+			</div>
+			
+			<!-- Submit Button -->
+			<button type="submit" class="btn-primary w-full">
+				Sign In
+			</button>
+			
+			<!-- General Error -->
+			if errors["general"] != "" {
+				@ErrorMessage(errors["general"])
+			}
+		</form>
+		
+		<!-- Footer Links -->
+		<div class="mt-6 text-center space-y-2">
+			<a href="/auth/forgot-password" class="text-sm text-blue-600 hover:text-blue-500">
+				Forgot your password?
+			</a>
+			<div class="text-sm text-gray-600">
+				Don't have an account? 
+				<a href="/auth/register" class="text-blue-600 hover:text-blue-500 font-medium">
+					Sign up
+				</a>
+			</div>
+		</div>
+	</div>
+}
+
+// RegisterForm renders the registration form component
+templ RegisterForm(errors map[string]string, formData RegisterFormData) {
+	<div class="card max-w-md mx-auto">
+		<div class="text-center mb-6">
+			<h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
+			<p class="text-gray-600 mt-2">Join us today! Please fill in your information.</p>
+		</div>
+		
+		<form method="POST" action="/auth/register" class="space-y-4">
+			<!-- First Name -->
+			<div>
+				<label for="first_name" class="form-label">First Name</label>
+				<input 
+					type="text" 
+					id="first_name" 
+					name="first_name" 
+					value={ formData.FirstName }
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["first_name"] != "") }
+					placeholder="Enter your first name"
+					required
+				/>
+				if errors["first_name"] != "" {
+					@ErrorMessage(errors["first_name"])
+				}
+			</div>
+			
+			<!-- Last Name -->
+			<div>
+				<label for="last_name" class="form-label">Last Name</label>
+				<input 
+					type="text" 
+					id="last_name" 
+					name="last_name" 
+					value={ formData.LastName }
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["last_name"] != "") }
+					placeholder="Enter your last name"
+					required
+				/>
+				if errors["last_name"] != "" {
+					@ErrorMessage(errors["last_name"])
+				}
+			</div>
+			
+			<!-- Email Field -->
+			<div>
+				<label for="email" class="form-label">Email Address</label>
+				<input 
+					type="email" 
+					id="email" 
+					name="email" 
+					value={ formData.Email }
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["email"] != "") }
+					placeholder="Enter your email"
+					required
+				/>
+				if errors["email"] != "" {
+					@ErrorMessage(errors["email"])
+				}
+			</div>
+			
+			<!-- Password Field -->
+			<div>
+				<label for="password" class="form-label">Password</label>
+				<input 
+					type="password" 
+					id="password" 
+					name="password" 
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["password"] != "") }
+					placeholder="Create a password"
+					required
+				/>
+				<div class="mt-1 text-xs text-gray-500">
+					Password must be at least 8 characters long
+				</div>
+				if errors["password"] != "" {
+					@ErrorMessage(errors["password"])
+				}
+			</div>
+			
+			<!-- Confirm Password Field -->
+			<div>
+				<label for="confirm_password" class="form-label">Confirm Password</label>
+				<input 
+					type="password" 
+					id="confirm_password" 
+					name="confirm_password" 
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["confirm_password"] != "") }
+					placeholder="Confirm your password"
+					required
+				/>
+				if errors["confirm_password"] != "" {
+					@ErrorMessage(errors["confirm_password"])
+				}
+			</div>
+			
+			<!-- Terms and Conditions -->
+			<div class="flex items-start">
+				<input 
+					type="checkbox" 
+					id="terms" 
+					name="terms" 
+					class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+					required
+				/>
+				<label for="terms" class="ml-2 block text-sm text-gray-700">
+					I agree to the 
+					<a href="/terms" class="text-blue-600 hover:text-blue-500">Terms of Service</a>
+					and 
+					<a href="/privacy" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+				</label>
+			</div>
+			if errors["terms"] != "" {
+				@ErrorMessage(errors["terms"])
+			}
+			
+			<!-- Submit Button -->
+			<button type="submit" class="btn-primary w-full">
+				Create Account
+			</button>
+			
+			<!-- General Error -->
+			if errors["general"] != "" {
+				@ErrorMessage(errors["general"])
+			}
+		</form>
+		
+		<!-- Footer Links -->
+		<div class="mt-6 text-center">
+			<div class="text-sm text-gray-600">
+				Already have an account? 
+				<a href="/auth/login" class="text-blue-600 hover:text-blue-500 font-medium">
+					Sign in
+				</a>
+			</div>
+		</div>
+	</div>
+}
+
+// RegisterFormData holds the form data for registration
+type RegisterFormData struct {
+	FirstName string
+	LastName  string
+	Email     string
+}
+
+// ForgotPasswordForm renders the forgot password form component
+templ ForgotPasswordForm(errors map[string]string, email string) {
+	<div class="card max-w-md mx-auto">
+		<div class="text-center mb-6">
+			<h2 class="text-2xl font-bold text-gray-900">Forgot Password</h2>
+			<p class="text-gray-600 mt-2">Enter your email address and we'll send you a link to reset your password.</p>
+		</div>
+		
+		<form method="POST" action="/auth/forgot-password" class="space-y-4">
+			<!-- Email Field -->
+			<div>
+				<label for="email" class="form-label">Email Address</label>
+				<input 
+					type="email" 
+					id="email" 
+					name="email" 
+					value={ email }
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["email"] != "") }
+					placeholder="Enter your email"
+					required
+				/>
+				if errors["email"] != "" {
+					@ErrorMessage(errors["email"])
+				}
+			</div>
+			
+			<!-- Submit Button -->
+			<button type="submit" class="btn-primary w-full">
+				Send Reset Link
+			</button>
+			
+			<!-- General Error -->
+			if errors["general"] != "" {
+				@ErrorMessage(errors["general"])
+			}
+		</form>
+		
+		<!-- Footer Links -->
+		<div class="mt-6 text-center space-y-2">
+			<div class="text-sm text-gray-600">
+				Remember your password? 
+				<a href="/auth/login" class="text-blue-600 hover:text-blue-500 font-medium">
+					Sign in
+				</a>
+			</div>
+			<div class="text-sm text-gray-600">
+				Don't have an account? 
+				<a href="/auth/register" class="text-blue-600 hover:text-blue-500 font-medium">
+					Sign up
+				</a>
+			</div>
+		</div>
+	</div>
+}
+
+// ResetPasswordForm renders the reset password form component
+templ ResetPasswordForm(errors map[string]string, token string) {
+	<div class="card max-w-md mx-auto">
+		<div class="text-center mb-6">
+			<h2 class="text-2xl font-bold text-gray-900">Reset Password</h2>
+			<p class="text-gray-600 mt-2">Enter your new password below.</p>
+		</div>
+		
+		<form method="POST" action="/auth/reset-password" class="space-y-4">
+			<!-- Hidden token field -->
+			<input type="hidden" name="token" value={ token }/>
+			
+			<!-- Password Field -->
+			<div>
+				<label for="password" class="form-label">New Password</label>
+				<input 
+					type="password" 
+					id="password" 
+					name="password" 
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["password"] != "") }
+					placeholder="Enter your new password"
+					required
+				/>
+				<div class="mt-1 text-xs text-gray-500">
+					Password must be at least 8 characters long
+				</div>
+				if errors["password"] != "" {
+					@ErrorMessage(errors["password"])
+				}
+			</div>
+			
+			<!-- Confirm Password Field -->
+			<div>
+				<label for="confirm_password" class="form-label">Confirm New Password</label>
+				<input 
+					type="password" 
+					id="confirm_password" 
+					name="confirm_password" 
+					class={ "form-input", templ.KV("border-red-300 focus:ring-red-500", errors["confirm_password"] != "") }
+					placeholder="Confirm your new password"
+					required
+				/>
+				if errors["confirm_password"] != "" {
+					@ErrorMessage(errors["confirm_password"])
+				}
+			</div>
+			
+			<!-- Submit Button -->
+			<button type="submit" class="btn-primary w-full">
+				Reset Password
+			</button>
+			
+			<!-- General Error -->
+			if errors["general"] != "" {
+				@ErrorMessage(errors["general"])
+			}
+		</form>
+		
+		<!-- Footer Links -->
+		<div class="mt-6 text-center">
+			<div class="text-sm text-gray-600">
+				Remember your password? 
+				<a href="/auth/login" class="text-blue-600 hover:text-blue-500 font-medium">
+					Sign in
+				</a>
+			</div>
+		</div>
+	</div>
+}
