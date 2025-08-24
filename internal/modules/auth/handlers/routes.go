@@ -81,6 +81,39 @@ func RegisterAuthRoutesWithMiddleware(e *echo.Echo, authService application.Auth
 	}
 }
 
+// RegisterAuthRoutesOnGroup registers auth routes on a provided group (for module system)
+func RegisterAuthRoutesOnGroup(group *echo.Group, authService application.AuthService) {
+	authHandler := NewAuthHandler(authService)
+	authMiddleware := middleware.NewAuthMiddleware(authService)
+
+	// Create CSRF middleware
+	csrfConfig := middleware.DefaultCSRFConfig()
+	csrfMiddleware := middleware.NewCSRFMiddleware(csrfConfig)
+
+	// Public auth routes (no authentication required)
+	// group is already /api/v1, so we create /auth subgroup
+	auth := group.Group("/auth")
+	// Apply CSRF protection to all auth routes
+	auth.Use(csrfMiddleware.Protect)
+	{
+		auth.POST("/login", authHandler.Login)                   // POST /api/v1/auth/login
+		auth.POST("/register", authHandler.Register)             // POST /api/v1/auth/register
+		auth.GET("/validate", authHandler.ValidateSession)       // GET /api/v1/auth/validate
+		auth.GET("/csrf-token", csrfMiddleware.CSRFTokenHandler) // GET /api/v1/auth/csrf-token
+	}
+
+	// Protected auth routes (authentication required)
+	authProtected := group.Group("/auth")
+	authProtected.Use(authMiddleware.RequireAuth)
+	authProtected.Use(csrfMiddleware.Protect) // Apply CSRF protection to protected routes too
+	{
+		authProtected.POST("/logout", authHandler.Logout)          // POST /api/v1/auth/logout
+		authProtected.GET("/me", authHandler.Me)                   // GET /api/v1/auth/me
+		authProtected.POST("/refresh", authHandler.RefreshSession) // POST /api/v1/auth/refresh
+		authProtected.PUT("/password", authHandler.ChangePassword) // PUT /api/v1/auth/password
+	}
+}
+
 // GetAuthMiddleware returns the auth middleware for use in other modules
 func GetAuthMiddleware(authService application.AuthService) *middleware.AuthMiddleware {
 	return middleware.NewAuthMiddleware(authService)
