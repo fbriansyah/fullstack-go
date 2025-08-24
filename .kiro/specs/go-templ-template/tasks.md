@@ -82,8 +82,7 @@
     - Write repository integration tests with test database
     - _Requirements: 3.2, 3.3, 3.4_
 
-- [-] 7. Implement Auth module application layer
-
+- [x] 7. Implement Auth module application layer
   - [x] 7.1 Create Auth commands and authentication service
     - Define LoginCommand, RegisterCommand, and LogoutCommand
     - Implement AuthService with login/logout logic and event publishing
@@ -92,14 +91,7 @@
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
   - [x] 7.2 Create Auth HTTP handlers and middleware
-
-
-
-
-
-
     - Implement login, registration, and logout endpoints
-
     - Create authentication middleware for protected routes
     - Add session cookie management and CSRF protection
     - Write HTTP handler integration tests
