@@ -67,7 +67,7 @@
     - Write HTTP handler integration tests
     - _Requirements: 1.3, 3.1, 3.2_
 
-- [ ] 6. Implement Auth module domain layer
+- [x] 6. Implement Auth module domain layer
   - [x] 6.1 Create Session domain models and authentication logic
     - Define Session aggregate with expiration and security features
     - Implement password hashing and validation utilities
@@ -75,7 +75,7 @@
     - Write unit tests for authentication domain logic
     - _Requirements: 3.1, 3.2, 3.3_
 
-  - [ ] 6.2 Implement Auth repository and session management
+  - [x] 6.2 Implement Auth repository and session management
     - Create SessionRepository interface and SQLx implementation with prepared statements
     - Implement session CRUD operations with cleanup utilities using SQL queries
     - Add session validation and expiration handling with database constraints
