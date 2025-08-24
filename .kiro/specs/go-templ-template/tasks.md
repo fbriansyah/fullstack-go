@@ -83,7 +83,7 @@
     - _Requirements: 3.2, 3.3, 3.4_
 
 - [ ] 7. Implement Auth module application layer
-  - [ ] 7.1 Create Auth commands and authentication service
+  - [x] 7.1 Create Auth commands and authentication service
     - Define LoginCommand, RegisterCommand, and LogoutCommand
     - Implement AuthService with login/logout logic and event publishing
     - Add rate limiting and security measures for authentication
