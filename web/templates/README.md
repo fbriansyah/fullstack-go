@@ -119,13 +119,19 @@ air
 
 ## Styling
 
-The templates use Tailwind CSS with custom component classes defined in `web/static/css/input.css`:
+The templates use Tailwind CSS v4 with custom component classes defined in `web/static/css/input.css`:
 
 - `.btn-primary` - Primary button styling
 - `.btn-secondary` - Secondary button styling  
 - `.card` - Card component styling
 - `.form-input` - Form input styling
 - `.form-label` - Form label styling
+
+### Tailwind v4 Features
+- Uses `@import "tailwindcss"` instead of separate `@tailwind` directives
+- Improved performance and smaller bundle sizes
+- Enhanced CSS-in-JS support
+- Better tree-shaking and optimization
 
 ## Browser Support
 
