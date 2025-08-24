@@ -39,7 +39,7 @@ func TestNewUserCreatedEvent(t *testing.T) {
 	assert.Equal(t, user.LastName, event.LastName)
 	assert.Equal(t, string(user.Status), event.Status)
 	assert.NotEmpty(t, event.BaseEvent.ID)
-	assert.Equal(t, 1, event.BaseEvent.Version)
+	assert.Equal(t, 1, event.BaseEvent.Version())
 	assert.True(t, time.Since(event.OccurredAt()) < time.Second)
 
 	// Test EventData
