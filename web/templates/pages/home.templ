@@ -1,0 +1,81 @@
+package pages
+
+import "go-templ-template/web/templates/layouts"
+
+templ Home() {
+	@layouts.Base("Home - Go Templ Template", homeContent())
+}
+
+templ homeContent() {
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+		<!-- Hero Section -->
+		<div class="text-center mb-16">
+			<h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+				Welcome to 
+				<span class="text-blue-600">Go Templ</span>
+			</h1>
+			<p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+				A modern fullstack Go template using Templ for type-safe HTML templating. 
+				Build robust web applications with clean architecture and responsive design.
+			</p>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a href="/register" class="btn-primary text-lg px-8 py-3">
+					Get Started
+				</a>
+				<a href="/docs" class="btn-secondary text-lg px-8 py-3">
+					View Docs
+				</a>
+			</div>
+		</div>
+		
+		<!-- Features Grid -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+			<div class="card text-center">
+				<div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+					<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+					</svg>
+				</div>
+				<h3 class="text-xl font-semibold text-gray-900 mb-2">Fast & Efficient</h3>
+				<p class="text-gray-600">
+					Built with Go's performance in mind, featuring hot reload and optimized builds.
+				</p>
+			</div>
+			
+			<div class="card text-center">
+				<div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+					<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+				</div>
+				<h3 class="text-xl font-semibold text-gray-900 mb-2">Type Safe</h3>
+				<p class="text-gray-600">
+					Templ provides compile-time safety for HTML templates with Go's type system.
+				</p>
+			</div>
+			
+			<div class="card text-center">
+				<div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+					<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+					</svg>
+				</div>
+				<h3 class="text-xl font-semibold text-gray-900 mb-2">Modern Stack</h3>
+				<p class="text-gray-600">
+					Includes authentication, database integration, and responsive UI components.
+				</p>
+			</div>
+		</div>
+		
+		<!-- CTA Section -->
+		<div class="bg-blue-600 rounded-2xl p-8 text-center text-white">
+			<h2 class="text-3xl font-bold mb-4">Ready to build something amazing?</h2>
+			<p class="text-blue-100 mb-6 max-w-2xl mx-auto">
+				Start with our template and focus on building your unique features instead of boilerplate code.
+			</p>
+			<a href="/register" class="bg-white text-blue-600 hover:bg-gray-100 font-medium py-3 px-8 rounded-lg transition-colors duration-200 inline-block">
+				Start Building Now
+			</a>
+		</div>
+	</div>
+}
