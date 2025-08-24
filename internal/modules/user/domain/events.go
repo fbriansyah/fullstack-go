@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+	"go-templ-template/internal/shared/events"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,11 +18,12 @@ type DomainEvent interface {
 
 // BaseEvent provides common event functionality
 type BaseEvent struct {
-	ID          string    `json:"id"`
-	Type        string    `json:"type"`
-	AggregateId string    `json:"aggregate_id"`
-	OccurredOn  time.Time `json:"occurred_at"`
-	Version     int       `json:"version"`
+	ID           string    `json:"id"`
+	Type         string    `json:"type"`
+	AggregateId  string    `json:"aggregate_id"`
+	AggregateTyp string    `json:"aggregate_type"`
+	OccurredOn   time.Time `json:"occurred_at"`
+	EventVersion int       `json:"version"`
 }
 
 // EventType returns the event type
@@ -34,9 +36,31 @@ func (e BaseEvent) AggregateID() string {
 	return e.AggregateId
 }
 
+// AggregateType returns the aggregate type
+func (e BaseEvent) AggregateType() string {
+	return e.AggregateTyp
+}
+
 // OccurredAt returns when the event occurred
 func (e BaseEvent) OccurredAt() time.Time {
 	return e.OccurredOn
+}
+
+// EventID returns the event ID
+func (e BaseEvent) EventID() string {
+	return e.ID
+}
+
+// Version returns the event version
+func (e BaseEvent) Version() int {
+	return e.EventVersion
+}
+
+// Metadata returns event metadata (empty for now)
+func (e BaseEvent) Metadata() events.EventMetadata {
+	return events.EventMetadata{
+		Source: "user-module",
+	}
 }
 
 // UserCreatedEvent represents a user creation event
@@ -53,11 +77,12 @@ type UserCreatedEvent struct {
 func NewUserCreatedEvent(user *User) *UserCreatedEvent {
 	return &UserCreatedEvent{
 		BaseEvent: BaseEvent{
-			ID:          generateEventID(),
-			Type:        "user.created",
-			AggregateId: user.ID,
-			OccurredOn:  time.Now().UTC(),
-			Version:     1,
+			ID:           generateEventID(),
+			Type:         "user.created",
+			AggregateId:  user.ID,
+			AggregateTyp: "user",
+			OccurredOn:   time.Now().UTC(),
+			EventVersion: 1,
 		},
 		UserID:    user.ID,
 		Email:     user.Email,
@@ -90,11 +115,12 @@ type UserUpdatedEvent struct {
 func NewUserUpdatedEvent(user *User, changes map[string]interface{}) *UserUpdatedEvent {
 	return &UserUpdatedEvent{
 		BaseEvent: BaseEvent{
-			ID:          generateEventID(),
-			Type:        "user.updated",
-			AggregateId: user.ID,
-			OccurredOn:  time.Now().UTC(),
-			Version:     1,
+			ID:           generateEventID(),
+			Type:         "user.updated",
+			AggregateId:  user.ID,
+			AggregateTyp: "user",
+			OccurredOn:   time.Now().UTC(),
+			EventVersion: 1,
 		},
 		UserID:          user.ID,
 		Changes:         changes,
@@ -124,11 +150,12 @@ type UserDeletedEvent struct {
 func NewUserDeletedEvent(user *User, deletedBy, reason string) *UserDeletedEvent {
 	return &UserDeletedEvent{
 		BaseEvent: BaseEvent{
-			ID:          generateEventID(),
-			Type:        "user.deleted",
-			AggregateId: user.ID,
-			OccurredOn:  time.Now().UTC(),
-			Version:     1,
+			ID:           generateEventID(),
+			Type:         "user.deleted",
+			AggregateId:  user.ID,
+			AggregateTyp: "user",
+			OccurredOn:   time.Now().UTC(),
+			EventVersion: 1,
 		},
 		UserID:    user.ID,
 		Email:     user.Email,
@@ -161,11 +188,12 @@ type UserStatusChangedEvent struct {
 func NewUserStatusChangedEvent(user *User, previousStatus UserStatus, changedBy, reason string) *UserStatusChangedEvent {
 	return &UserStatusChangedEvent{
 		BaseEvent: BaseEvent{
-			ID:          generateEventID(),
-			Type:        "user.status_changed",
-			AggregateId: user.ID,
-			OccurredOn:  time.Now().UTC(),
-			Version:     1,
+			ID:           generateEventID(),
+			Type:         "user.status_changed",
+			AggregateId:  user.ID,
+			AggregateTyp: "user",
+			OccurredOn:   time.Now().UTC(),
+			EventVersion: 1,
 		},
 		UserID:         user.ID,
 		PreviousStatus: string(previousStatus),
@@ -198,11 +226,12 @@ type UserEmailChangedEvent struct {
 func NewUserEmailChangedEvent(user *User, previousEmail string) *UserEmailChangedEvent {
 	return &UserEmailChangedEvent{
 		BaseEvent: BaseEvent{
-			ID:          generateEventID(),
-			Type:        "user.email_changed",
-			AggregateId: user.ID,
-			OccurredOn:  time.Now().UTC(),
-			Version:     1,
+			ID:           generateEventID(),
+			Type:         "user.email_changed",
+			AggregateId:  user.ID,
+			AggregateTyp: "user",
+			OccurredOn:   time.Now().UTC(),
+			EventVersion: 1,
 		},
 		UserID:        user.ID,
 		PreviousEmail: previousEmail,
