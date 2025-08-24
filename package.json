@@ -1,0 +1,13 @@
+{
+  "name": "go-templ-template",
+  "version": "1.0.0",
+  "description": "Go fullstack template with Templ",
+  "scripts": {
+    "build-css": "tailwindcss -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --watch",
+    "build-css-prod": "tailwindcss -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.12",
+    "tailwindcss": "^4.1.12"
+  }
+}
