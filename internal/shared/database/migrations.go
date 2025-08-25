@@ -58,9 +58,13 @@ func NewMigrationRunner(cfg *config.DatabaseConfig, migrationsPath string) (*Mig
 		return nil, fmt.Errorf("failed to get absolute path for migrations: %w", err)
 	}
 
+	// Convert Windows path to Unix-style path for file URL
+	// Replace backslashes with forward slashes for Windows compatibility
+	unixPath := filepath.ToSlash(absPath)
+
 	// Create migrate instance
 	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file://%s", absPath),
+		fmt.Sprintf("file://%s", unixPath),
 		"postgres",
 		driver,
 	)
