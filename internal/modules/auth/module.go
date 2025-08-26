@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
 
 	"go-templ-template/internal/config"
 	"go-templ-template/internal/modules/auth/application"
@@ -11,6 +13,7 @@ import (
 	"go-templ-template/internal/modules/user"
 	userApplication "go-templ-template/internal/modules/user/application"
 	"go-templ-template/internal/shared"
+	"go-templ-template/internal/shared/audit"
 	"go-templ-template/internal/shared/database"
 	"go-templ-template/internal/shared/events"
 
@@ -26,6 +29,8 @@ type AuthModule struct {
 	db          *database.DB
 	config      *config.Config
 	userService userApplication.UserService
+	auditLogger audit.AuditLogger
+	logger      *slog.Logger
 }
 
 // NewAuthModule creates a new auth module instance
@@ -58,6 +63,11 @@ func (m *AuthModule) Initialize(ctx context.Context, container *shared.ModuleCon
 	m.db = db
 	m.config = config
 
+	// Initialize logger
+	m.logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
+
 	// Get user service from user module
 	userModule, exists := container.GetModule("user")
 	if !exists {
@@ -73,6 +83,9 @@ func (m *AuthModule) Initialize(ctx context.Context, container *shared.ModuleCon
 	if m.userService == nil {
 		return shared.NewModuleError(m.name, "user service not available from user module")
 	}
+
+	// Initialize audit logger
+	m.auditLogger = audit.NewAuditLogger(db)
 
 	// Initialize repository
 	sessionRepo := infrastructure.NewSessionRepositoryAdapter(db)
@@ -108,13 +121,30 @@ func (m *AuthModule) RegisterRoutes(router *echo.Group) {
 
 // RegisterEventHandlers registers the module's event handlers with the event bus
 func (m *AuthModule) RegisterEventHandlers(eventBus events.EventBus) error {
-	// Auth module can listen to user events and react accordingly
-	// For example, when a user is deleted, we might want to clean up their sessions
+	// Register event handlers for user lifecycle events with audit logging
 
-	// Register event handlers for user lifecycle events
-	userDeletedHandler := NewUserDeletedHandler(m.authService)
+	// Register handler for user created events
+	userCreatedHandler := application.NewUserCreatedEventHandler(m.authService, m.logger, m.auditLogger)
+	if err := eventBus.Subscribe("user.created", userCreatedHandler); err != nil {
+		return shared.NewModuleErrorWithCause(m.name, "failed to subscribe to user.created event", err)
+	}
+
+	// Register handler for user updated events
+	userUpdatedHandler := application.NewUserUpdatedEventHandler(m.authService, m.logger, m.auditLogger)
+	if err := eventBus.Subscribe("user.updated", userUpdatedHandler); err != nil {
+		return shared.NewModuleErrorWithCause(m.name, "failed to subscribe to user.updated event", err)
+	}
+
+	// Register handler for user deleted events
+	userDeletedHandler := application.NewUserDeletedEventHandler(m.authService, m.logger, m.auditLogger)
 	if err := eventBus.Subscribe("user.deleted", userDeletedHandler); err != nil {
 		return shared.NewModuleErrorWithCause(m.name, "failed to subscribe to user.deleted event", err)
+	}
+
+	// Keep the existing handlers for backward compatibility
+	legacyUserDeletedHandler := NewUserDeletedHandler(m.authService)
+	if err := eventBus.Subscribe("user.deleted", legacyUserDeletedHandler); err != nil {
+		return shared.NewModuleErrorWithCause(m.name, "failed to subscribe to user.deleted event (legacy)", err)
 	}
 
 	// Register handler for user status changes
