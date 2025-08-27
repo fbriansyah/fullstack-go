@@ -135,20 +135,15 @@
     - Write application startup integration tests
     - _Requirements: 1.2, 1.3, 6.3_
 
-- [ ] 10. Implement cross-module event handling
+- [x] 10. Implement cross-module event handling
   - [x] 10.1 Create event handlers for user lifecycle events
-
-
-
-
-
     - Implement handlers for UserCreated events in Auth module
     - Create audit logging for authentication events
     - Add notification triggers for user events (future extensibility)
     - Write event handler integration tests
     - _Requirements: 1.1_
 
-  - [ ] 10.2 Add event-driven features and workflows
+  - [x] 10.2 Add event-driven features and workflows
     - Implement user activation workflow via events
     - Create session cleanup based on user events
     - Add event-based audit trail functionality
