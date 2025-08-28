@@ -59,6 +59,11 @@ func (m *MockAuthService) CleanupExpiredSessions(ctx context.Context) error {
 	return args.Error(0)
 }
 
+func (m *MockAuthService) GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
+	args := m.Called(ctx, userID)
+	return args.Get(0).([]*domain.Session), args.Error(1)
+}
+
 // MockAuditLogger is a mock implementation of AuditLogger for testing
 type MockAuditLogger struct {
 	mock.Mock

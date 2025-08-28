@@ -358,3 +358,12 @@ func (s *SimpleAuthService) CleanupExpiredSessions(ctx context.Context) error {
 	}
 	return nil
 }
+
+// GetUserSessions returns all active sessions for a user
+func (s *SimpleAuthService) GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
+	sessions, err := s.sessionRepo.GetByUserID(ctx, userID)
+	if err != nil {
+		return nil, NewInternalError(fmt.Sprintf("failed to get user sessions: %v", err))
+	}
+	return sessions, nil
+}
