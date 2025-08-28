@@ -34,6 +34,9 @@ type AuthService interface {
 
 	// CleanupExpiredSessions removes expired sessions from storage
 	CleanupExpiredSessions(ctx context.Context) error
+
+	// GetUserSessions returns all active sessions for a user (for testing/admin purposes)
+	GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error)
 }
 
 // AuthResult represents the result of a successful authentication
@@ -472,6 +475,15 @@ func (s *authServiceImpl) CleanupExpiredSessions(ctx context.Context) error {
 		return NewInternalError(fmt.Sprintf("failed to cleanup expired sessions: %v", err))
 	}
 	return nil
+}
+
+// GetUserSessions returns all active sessions for a user
+func (s *authServiceImpl) GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
+	sessions, err := s.sessionRepo.GetByUserID(ctx, userID)
+	if err != nil {
+		return nil, NewInternalError(fmt.Sprintf("failed to get user sessions: %v", err))
+	}
+	return sessions, nil
 }
 
 // DefaultSessionConfig returns a default session configuration

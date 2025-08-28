@@ -73,6 +73,14 @@ func (m *mockAuthService) CleanupExpiredSessions(ctx context.Context) error {
 	return args.Error(0)
 }
 
+func (m *mockAuthService) GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
+	args := m.Called(ctx, userID)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).([]*domain.Session), args.Error(1)
+}
+
 // Test helper functions
 func createTestUser() *userDomain.User {
 	user, _ := userDomain.NewUser("user-123", "test@example.com", "Password123", "John", "Doe")

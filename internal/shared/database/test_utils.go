@@ -9,6 +9,7 @@ import (
 
 	"go-templ-template/internal/config"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/require"
 )
 
@@ -297,4 +298,54 @@ func SkipIfNoDatabase(t *testing.T) {
 	}
 
 	_ = db.Close()
+}
+
+// NewTestDB creates a new test database connection (alias for NewTestDatabase)
+func NewTestDB() (*TestDatabase, error) {
+	cfg := DefaultTestDatabaseConfig()
+
+	db, err := NewConnection(cfg.ToConfig(), DefaultConnectionOptions())
+	if err != nil {
+		return nil, err
+	}
+
+	return &TestDatabase{
+		DB:     db,
+		Config: cfg,
+	}, nil
+}
+
+// CreateTables creates the basic tables needed for testing
+func CreateTables(ctx context.Context, db *sqlx.DB) error {
+	// This is a placeholder - in a real application, you would run your migrations here
+	// For now, we'll create some basic tables that tests might need
+
+	queries := []string{
+		`CREATE TABLE IF NOT EXISTS users (
+			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+			email VARCHAR(255) UNIQUE NOT NULL,
+			password_hash VARCHAR(255) NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			is_active BOOLEAN NOT NULL DEFAULT true,
+			created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+			updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+			version INTEGER NOT NULL DEFAULT 1
+		)`,
+		`CREATE TABLE IF NOT EXISTS sessions (
+			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+			user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			token_hash VARCHAR(255) NOT NULL,
+			expires_at TIMESTAMP NOT NULL,
+			created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+			updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+		)`,
+	}
+
+	for _, query := range queries {
+		if _, err := db.ExecContext(ctx, query); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

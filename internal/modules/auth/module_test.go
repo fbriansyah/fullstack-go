@@ -144,6 +144,11 @@ func (m *MockAuthService) CleanupExpiredSessions(ctx context.Context) error {
 	return args.Error(0)
 }
 
+func (m *MockAuthService) GetUserSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
+	args := m.Called(ctx, userID)
+	return args.Get(0).([]*domain.Session), args.Error(1)
+}
+
 func TestAuthModule_Name(t *testing.T) {
 	// Arrange
 	module := NewAuthModule()
