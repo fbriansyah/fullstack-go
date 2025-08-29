@@ -160,11 +160,11 @@ err := db.SelectContext(ctx, &users, query, args...)
 
 ```go
 func TestUserRepository(t *testing.T) {
-    // Skip if no test database available
-    SkipIfNoDatabase(t)
+    // Skip if no test database available within 5 seconds
+    SkipIfNoDatabaseWithTimeout(t, 5*time.Second)
     
-    // Set up test database
-    testDB := NewTestDatabase(t)
+    // Set up test database with custom timeout
+    testDB := NewTestDatabaseWithTimeout(t, 10*time.Second)
     defer testDB.Close()
     
     // Create test table
@@ -197,6 +197,23 @@ func TestUserRepository(t *testing.T) {
     assert.NoError(t, err)
     assert.Equal(t, user.Email, retrieved.Email)
 }
+
+// Example of conditional testing based on database availability
+func TestUserRepositoryIntegration(t *testing.T) {
+    // Check if database is available before expensive setup
+    if !IsTestDatabaseAvailable(2*time.Second) {
+        t.Skip("Database not available for integration test")
+    }
+    
+    // Use test suite with timeout
+    suite := NewTestSuiteWithTimeout(t, 15*time.Second)
+    defer suite.Teardown()
+    
+    suite.Setup()
+    suite.CreateTestEntitiesTable()
+    
+    // Run integration tests...
+}
 ```
 
 ## Configuration
@@ -212,6 +229,38 @@ export TEST_DB_USER=postgres
 export TEST_DB_PASSWORD=postgres
 export TEST_DB_NAME=test_db
 export TEST_DB_SSLMODE=disable
+export TEST_DB_TIMEOUT=30s
+```
+
+### Timeout Configuration
+
+The test utilities now support configurable timeouts for database connections:
+
+```go
+// Use default timeout (30s or TEST_DB_TIMEOUT env var)
+testDB := NewTestDatabase(t)
+
+// Use custom timeout
+testDB := NewTestDatabaseWithTimeout(t, 10*time.Second)
+
+// Skip test if database not available within timeout
+SkipIfNoDatabaseWithTimeout(t, 5*time.Second)
+
+// Check database availability conditionally
+if IsTestDatabaseAvailable(2*time.Second) {
+    // Run integration tests
+} else {
+    // Use mocks or skip
+}
+
+// Try to connect without failing the test
+testDB := TryConnectWithTimeout(3*time.Second)
+if testDB != nil {
+    defer testDB.Close()
+    // Use real database
+} else {
+    // Use mock implementations
+}
 ```
 
 ### Connection Options
@@ -247,10 +296,12 @@ db, err := NewConnection(cfg, opts)
 
 ### Testing
 
-1. **Skip When No DB**: Use `SkipIfNoDatabase(t)` for integration tests
-2. **Clean Up**: Always clean up test data between tests
-3. **Test Transactions**: Test both success and rollback scenarios
-4. **Use Test Utilities**: Leverage the provided test utilities for consistency
+1. **Skip When No DB**: Use `SkipIfNoDatabase(t)` or `SkipIfNoDatabaseWithTimeout(t, timeout)` for integration tests
+2. **Configure Timeouts**: Use appropriate timeouts for different test scenarios (unit tests: short, integration tests: longer)
+3. **Clean Up**: Always clean up test data between tests
+4. **Test Transactions**: Test both success and rollback scenarios
+5. **Use Test Utilities**: Leverage the provided test utilities for consistency
+6. **Conditional Testing**: Use `IsTestDatabaseAvailable()` to conditionally run tests or switch to mocks
 
 ## Error Handling
 

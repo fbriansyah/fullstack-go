@@ -38,6 +38,11 @@ func DefaultConnectionOptions() ConnectionOptions {
 
 // NewConnection creates a new database connection with connection pooling
 func NewConnection(cfg *config.DatabaseConfig, opts ConnectionOptions) (*DB, error) {
+	return NewConnectionWithTimeout(cfg, opts, 30*time.Second)
+}
+
+// NewConnectionWithTimeout creates a new database connection with connection pooling and custom timeout
+func NewConnectionWithTimeout(cfg *config.DatabaseConfig, opts ConnectionOptions, timeout time.Duration) (*DB, error) {
 	var dsn string
 
 	// Use DATABASE_URL if provided, otherwise build from individual components
@@ -45,15 +50,19 @@ func NewConnection(cfg *config.DatabaseConfig, opts ConnectionOptions) (*DB, err
 		dsn = cfg.URL
 	} else {
 		dsn = fmt.Sprintf(
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-			cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode,
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s connect_timeout=%d",
+			cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode, int(timeout.Seconds()),
 		)
 	}
 
-	// Open database connection
-	sqlxDB, err := sqlx.Connect("postgres", dsn)
+	// Create context with timeout for connection attempt
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	// Open database connection with timeout
+	sqlxDB, err := sqlx.ConnectContext(ctx, "postgres", dsn)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %w", err)
+		return nil, fmt.Errorf("failed to connect to database within %v: %w", timeout, err)
 	}
 
 	// Configure connection pool
