@@ -15,23 +15,31 @@ import (
 
 // TestDatabaseConfig holds configuration for test database
 type TestDatabaseConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Name     string
-	SSLMode  string
+	Host           string
+	Port           string
+	User           string
+	Password       string
+	Name           string
+	SSLMode        string
+	ConnectTimeout time.Duration
 }
 
 // DefaultTestDatabaseConfig returns default test database configuration
 func DefaultTestDatabaseConfig() *TestDatabaseConfig {
+	timeoutStr := getEnvOrDefault("TEST_DB_TIMEOUT", "30s")
+	timeout, err := time.ParseDuration(timeoutStr)
+	if err != nil {
+		timeout = 30 * time.Second // fallback to default
+	}
+
 	return &TestDatabaseConfig{
-		Host:     getEnvOrDefault("TEST_DB_HOST", "localhost"),
-		Port:     getEnvOrDefault("TEST_DB_PORT", "5432"),
-		User:     getEnvOrDefault("TEST_DB_USER", "postgres"),
-		Password: getEnvOrDefault("TEST_DB_PASSWORD", "postgres"),
-		Name:     getEnvOrDefault("TEST_DB_NAME", "test_db"),
-		SSLMode:  getEnvOrDefault("TEST_DB_SSLMODE", "disable"),
+		Host:           getEnvOrDefault("TEST_DB_HOST", "localhost"),
+		Port:           getEnvOrDefault("TEST_DB_PORT", "5432"),
+		User:           getEnvOrDefault("TEST_DB_USER", "postgres"),
+		Password:       getEnvOrDefault("TEST_DB_PASSWORD", "postgres"),
+		Name:           getEnvOrDefault("TEST_DB_NAME", "test_db"),
+		SSLMode:        getEnvOrDefault("TEST_DB_SSLMODE", "disable"),
+		ConnectTimeout: timeout,
 	}
 }
 
@@ -57,20 +65,12 @@ type TestDatabase struct {
 // NewTestDatabase creates a new test database instance
 func NewTestDatabase(t *testing.T) *TestDatabase {
 	cfg := DefaultTestDatabaseConfig()
-
-	db, err := NewConnection(cfg.ToConfig(), DefaultConnectionOptions())
-	require.NoError(t, err, "Failed to connect to test database")
-
-	return &TestDatabase{
-		DB:     db,
-		Config: cfg,
-		t:      t,
-	}
+	return NewTestDatabaseWithConfig(t, cfg)
 }
 
 // NewTestDatabaseWithConfig creates a new test database instance with custom config
 func NewTestDatabaseWithConfig(t *testing.T, cfg *TestDatabaseConfig) *TestDatabase {
-	db, err := NewConnection(cfg.ToConfig(), DefaultConnectionOptions())
+	db, err := NewConnectionWithTimeout(cfg.ToConfig(), DefaultConnectionOptions(), cfg.ConnectTimeout)
 	require.NoError(t, err, "Failed to connect to test database")
 
 	return &TestDatabase{
@@ -219,6 +219,23 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	}
 }
 
+// NewTestSuiteWithTimeout creates a new test suite with custom timeout
+func NewTestSuiteWithTimeout(t *testing.T, timeout time.Duration) *TestSuite {
+	testDB := NewTestDatabaseWithTimeout(t, timeout)
+
+	// Create a manager for testing
+	manager, err := NewManager(testDB.Config.ToConfig(), "")
+	require.NoError(t, err)
+
+	return &TestSuite{
+		DB:       testDB,
+		Manager:  manager,
+		t:        t,
+		tables:   make([]string, 0),
+		cleanups: make([]func(), 0),
+	}
+}
+
 // AddTable registers a table for cleanup
 func (ts *TestSuite) AddTable(tableName string) {
 	ts.tables = append(ts.tables, tableName)
@@ -231,8 +248,8 @@ func (ts *TestSuite) AddCleanup(cleanup func()) {
 
 // Setup performs initial setup for the test suite
 func (ts *TestSuite) Setup() {
-	// Wait for database to be available
-	ts.DB.WaitForConnection(30 * time.Second)
+	// Wait for database to be available using configured timeout
+	ts.DB.WaitForConnection(ts.DB.Config.ConnectTimeout)
 }
 
 // Teardown performs cleanup for the test suite
@@ -279,32 +296,80 @@ func getEnvOrDefault(key, defaultValue string) string {
 	return defaultValue
 }
 
+// NewTestDatabaseWithTimeout creates a new test database instance with custom timeout
+func NewTestDatabaseWithTimeout(t *testing.T, timeout time.Duration) *TestDatabase {
+	cfg := DefaultTestDatabaseConfig()
+	cfg.ConnectTimeout = timeout
+	return NewTestDatabaseWithConfig(t, cfg)
+}
+
+// TryConnectWithTimeout attempts to connect to the test database with a timeout
+// Returns nil if connection fails, useful for conditional test setup
+func TryConnectWithTimeout(timeout time.Duration) *TestDatabase {
+	cfg := DefaultTestDatabaseConfig()
+	cfg.ConnectTimeout = timeout
+
+	db, err := NewConnectionWithTimeout(cfg.ToConfig(), DefaultConnectionOptions(), timeout)
+	if err != nil {
+		return nil
+	}
+
+	// Test the connection
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	if err := db.HealthCheck(ctx); err != nil {
+		db.Close()
+		return nil
+	}
+
+	return &TestDatabase{
+		DB:     db,
+		Config: cfg,
+	}
+}
+
+// IsTestDatabaseAvailable checks if the test database is available within the timeout
+func IsTestDatabaseAvailable(timeout time.Duration) bool {
+	testDB := TryConnectWithTimeout(timeout)
+	if testDB != nil {
+		testDB.Close()
+		return true
+	}
+	return false
+}
+
 // SkipIfNoDatabase skips the test if no test database is available
 func SkipIfNoDatabase(t *testing.T) {
 	cfg := DefaultTestDatabaseConfig()
+	SkipIfNoDatabaseWithTimeout(t, cfg.ConnectTimeout)
+}
 
-	db, err := NewConnection(cfg.ToConfig(), DefaultConnectionOptions())
+// SkipIfNoDatabaseWithTimeout skips the test if no test database is available within the specified timeout
+func SkipIfNoDatabaseWithTimeout(t *testing.T, timeout time.Duration) {
+	cfg := DefaultTestDatabaseConfig()
+
+	db, err := NewConnectionWithTimeout(cfg.ToConfig(), DefaultConnectionOptions(), timeout)
 	if err != nil {
 		t.Skipf("Skipping database test: %v", err)
 		return
 	}
+	defer db.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	if err := db.HealthCheck(ctx); err != nil {
 		t.Skipf("Skipping database test: database not available: %v", err)
 		return
 	}
-
-	_ = db.Close()
 }
 
 // NewTestDB creates a new test database connection (alias for NewTestDatabase)
 func NewTestDB() (*TestDatabase, error) {
 	cfg := DefaultTestDatabaseConfig()
 
-	db, err := NewConnection(cfg.ToConfig(), DefaultConnectionOptions())
+	db, err := NewConnectionWithTimeout(cfg.ToConfig(), DefaultConnectionOptions(), cfg.ConnectTimeout)
 	if err != nil {
 		return nil, err
 	}
