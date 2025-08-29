@@ -39,7 +39,7 @@
   }
   
   .table-responsive {
-    @apply overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg;
+    @apply overflow-x-auto shadow ring-1 ring-black/5 rounded-lg;
   }
   
   .table {
