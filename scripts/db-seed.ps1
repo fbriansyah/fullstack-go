@@ -227,33 +227,74 @@ function Add-AuditEvents {
     Write-Status "Seeding audit events..."
     
     $auditSQL = @"
-        INSERT INTO audit_events (id, event_type, aggregate_id, event_data, occurred_at, created_at)
+        INSERT INTO audit_events (event_id, event_type, aggregate_id, aggregate_type, user_id, action, resource, resource_id, details, occurred_at, metadata)
         VALUES 
         (
             'audit-event-1',
             'user.created',
             'admin-user-id-1234567890',
+            'user',
+            'admin-user-id-1234567890',
+            'create',
+            'user',
+            'admin-user-id-1234567890',
             '{\"email\": \"admin@example.com\", \"first_name\": \"Admin\", \"last_name\": \"User\"}',
             NOW() - INTERVAL '1 hour',
-            NOW() - INTERVAL '1 hour'
+            '{\"source\": \"seed_script\", \"version\": \"1.0\"}'
         ),
         (
             'audit-event-2',
             'user.created',
             'user-id-1234567890',
+            'user',
+            'user-id-1234567890',
+            'create',
+            'user',
+            'user-id-1234567890',
             '{\"email\": \"john.doe@example.com\", \"first_name\": \"John\", \"last_name\": \"Doe\"}',
             NOW() - INTERVAL '30 minutes',
-            NOW() - INTERVAL '30 minutes'
+            '{\"source\": \"seed_script\", \"version\": \"1.0\"}'
         ),
         (
             'audit-event-3',
             'user.login',
             'admin-user-id-1234567890',
-            '{\"session_id\": \"session-admin-123456\", \"ip_address\": \"127.0.0.1\"}',
+            'session',
+            'admin-user-id-1234567890',
+            'login',
+            'session',
+            'session-admin-123456',
+            '{\"session_id\": \"session-admin-123456\", \"ip_address\": \"127.0.0.1\", \"user_agent\": \"Mozilla/5.0 (Development Seed)\"}',
             NOW() - INTERVAL '15 minutes',
-            NOW() - INTERVAL '15 minutes'
+            '{\"source\": \"seed_script\", \"version\": \"1.0\"}'
+        ),
+        (
+            'audit-event-4',
+            'user.created',
+            'user-id-0987654321',
+            'user',
+            'user-id-0987654321',
+            'create',
+            'user',
+            'user-id-0987654321',
+            '{\"email\": \"jane.smith@example.com\", \"first_name\": \"Jane\", \"last_name\": \"Smith\"}',
+            NOW() - INTERVAL '25 minutes',
+            '{\"source\": \"seed_script\", \"version\": \"1.0\"}'
+        ),
+        (
+            'audit-event-5',
+            'user.created',
+            'user-id-1122334455',
+            'user',
+            'user-id-1122334455',
+            'create',
+            'user',
+            'user-id-1122334455',
+            '{\"email\": \"bob.wilson@example.com\", \"first_name\": \"Bob\", \"last_name\": \"Wilson\", \"status\": \"inactive\"}',
+            NOW() - INTERVAL '20 minutes',
+            '{\"source\": \"seed_script\", \"version\": \"1.0\"}'
         )
-        ON CONFLICT (id) DO NOTHING;
+        ON CONFLICT (event_id) DO NOTHING;
 "@
     
     Invoke-SQL $auditSQL "Creating audit events"

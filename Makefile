@@ -21,14 +21,22 @@ help:
 	@echo "  test           - Run tests"
 	@echo "  test-verbose   - Run tests with verbose output"
 	@echo "  test-coverage  - Run tests with coverage report"
+	@echo "  test-migrations - Test migration and seeding functionality"
 	@echo "  lint           - Run linter"
 	@echo "  fmt            - Format code"
 	@echo ""
 	@echo "Database:"
-	@echo "  migrate-up     - Run database migrations up"
-	@echo "  migrate-down   - Run database migrations down"
+	@echo "  migrate-up      - Run database migrations up"
+	@echo "  migrate-down    - Run database migrations down"
 	@echo "  migrate-version - Show current migration version"
-	@echo "  db-health      - Check database health"
+	@echo "  migrate-status  - Show detailed migration status"
+	@echo "  migrate-list    - List all available migrations"
+	@echo "  migrate-steps   - Run N migration steps (STEPS=N)"
+	@echo "  migrate-to      - Migrate to specific version (VERSION=N)"
+	@echo "  migrate-create  - Create new migration (NAME=\"migration name\")"
+	@echo "  migrate-validate - Validate all migration files"
+	@echo "  migrate-force   - Force migration version (VERSION=N)"
+	@echo "  db-health       - Check database health"
 	@echo ""
 	@echo "Docker:"
 	@echo "  docker-up      - Start Docker services"
@@ -182,8 +190,36 @@ migrate-down:
 migrate-version:
 	go run ./cmd/migrate -action=version
 
+migrate-status:
+	go run ./cmd/migrate -action=status
+
+migrate-list:
+	go run ./cmd/migrate -action=list
+
 migrate-steps:
 	go run ./cmd/migrate -action=steps -steps=$(STEPS)
+
+migrate-to:
+	go run ./cmd/migrate -action=to -version=$(VERSION)
+
+migrate-create:
+	go run ./cmd/migrate -action=create -name="$(NAME)"
+
+migrate-validate:
+	go run ./cmd/migrate -action=validate
+
+migrate-force:
+	go run ./cmd/migrate -action=force -version=$(VERSION)
+
+# Test migration functionality
+test-migrations:
+	@if [ -f "scripts/test-migrations.sh" ]; then \
+		chmod +x scripts/test-migrations.sh && ./scripts/test-migrations.sh; \
+	elif [ -f "scripts/test-migrations.ps1" ]; then \
+		powershell -ExecutionPolicy Bypass -File scripts/test-migrations.ps1; \
+	else \
+		echo "No migration test script found"; \
+	fi
 
 # Database health check
 db-health:
