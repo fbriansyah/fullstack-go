@@ -54,3 +54,11 @@ dist/
 # Air tmp directory
 tmp/
 node_modules/
+
+# Development artifacts
+coverage.out
+coverage.html
+build-errors.log
+
+# CSS build output (if using Tailwind)
+web/static/css/output.css

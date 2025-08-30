@@ -57,6 +57,19 @@ The application will be available at `http://localhost:8080`
 
 ## Development
 
+### Quick Start Development
+
+For a complete development environment setup:
+
+```bash
+# Automated setup (recommended)
+make setup
+
+# Or run the setup script directly
+./scripts/dev-setup.sh        # Linux/macOS
+.\scripts\dev-setup.ps1       # Windows PowerShell
+```
+
 ### Hot Reload Development
 
 Start the development environment with hot reload:
@@ -69,19 +82,50 @@ This will:
 - Start PostgreSQL and RabbitMQ services
 - Watch for file changes and automatically restart the server
 - Regenerate Templ files on changes
+- Rebuild CSS when Tailwind files change
+
+### Development Workflow
+
+1. **Initial Setup**: `make setup` (one-time)
+2. **Start Development**: `make dev`
+3. **Seed Database**: `make db-seed` (optional)
+4. **Run Tests**: `make test`
+5. **Format Code**: `make fmt`
 
 ### Available Commands
 
 ```bash
-make help              # Show all available commands
+# Development
+make setup             # Complete development environment setup
+make dev               # Start development server with hot reload
+make db-seed           # Seed database with development data
+
+# Building & Running
 make build             # Build the application
 make run               # Run the application
+make templ-generate    # Generate Go code from Templ files
+
+# Testing & Quality
 make test              # Run tests
-make clean             # Clean build artifacts
+make test-coverage     # Run tests with coverage report
+make lint              # Run linter
+make fmt               # Format code
+
+# Database
+make migrate-up        # Run database migrations
+make migrate-down      # Rollback migrations
+make db-health         # Check database connectivity
+
+# Docker
 make docker-up         # Start Docker services
 make docker-down       # Stop Docker services
-make templ-generate    # Generate Go code from Templ files
+
+# Utilities
+make clean             # Clean build artifacts
+make help              # Show all available commands
 ```
+
+For detailed development setup instructions, see [Development Guide](docs/development.md).
 
 ### Project Structure
 
