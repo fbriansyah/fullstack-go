@@ -15,6 +15,7 @@ import (
 	"go-templ-template/internal/modules/user"
 	"go-templ-template/internal/shared"
 	"go-templ-template/internal/shared/database"
+	"go-templ-template/internal/shared/errors"
 	"go-templ-template/internal/shared/events"
 
 	"github.com/labstack/echo/v4"
@@ -77,6 +78,7 @@ type App struct {
 	dbManager      *database.Manager
 	eventBus       events.EventBus
 	moduleRegistry *shared.ModuleRegistry
+	errorHandlers  *errors.ErrorHandlers
 }
 
 // NewApp creates a new application instance with all dependencies
@@ -88,10 +90,21 @@ func NewApp(cfg *config.Config) (*App, error) {
 	router.HideBanner = true
 	router.HidePort = true
 
+	// Create error handlers
+	errorHandlersConfig := errors.ErrorHandlersConfig{
+		ShowDetailedErrors: cfg.Server.Env != "production",
+		LogErrors:          true,
+	}
+	errorHandlers := errors.NewErrorHandlers(errorHandlersConfig)
+
+	// Set custom error handler
+	router.HTTPErrorHandler = errorHandlers.CustomHTTPErrorHandler
+
 	// Add middleware
 	router.Use(middleware.Logger())
 	router.Use(middleware.Recover())
 	router.Use(middleware.CORS())
+	router.Use(errorHandlers.ErrorPageMiddleware())
 
 	// Create database manager
 	migrationsPath := "migrations"
@@ -155,6 +168,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		dbManager:      dbManager,
 		eventBus:       eventBus,
 		moduleRegistry: moduleRegistry,
+		errorHandlers:  errorHandlers,
 	}, nil
 }
 
@@ -180,6 +194,9 @@ func (a *App) Start(ctx context.Context) error {
 
 	// Register health check endpoints
 	a.registerHealthEndpoints()
+
+	// Register error page routes
+	a.errorHandlers.RegisterRoutes(a.router)
 
 	// Start HTTP server in a goroutine
 	go func() {
