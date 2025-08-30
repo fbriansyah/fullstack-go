@@ -1,0 +1,313 @@
+package pages
+
+import (
+	"go-templ-template/web/templates/layouts"
+	"go-templ-template/web/templates/components"
+)
+
+// Error404Page renders the 404 Not Found error page
+templ Error404Page() {
+	@layouts.Base("Page Not Found - Go Templ Template", Error404Content())
+}
+
+// Error404Content renders the content for 404 error page
+templ Error404Content() {
+	<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8 text-center">
+			<div>
+				<div class="mx-auto h-32 w-32 text-indigo-600">
+					<svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.5-.935-6.072-2.456M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9-9-4.03-9-9z"></path>
+					</svg>
+				</div>
+				<h1 class="mt-6 text-6xl font-bold text-gray-900">404</h1>
+				<h2 class="mt-2 text-3xl font-bold text-gray-900">Page Not Found</h2>
+				<p class="mt-4 text-lg text-gray-600">
+					Sorry, we couldn't find the page you're looking for. The page might have been moved, deleted, or you might have entered the wrong URL.
+				</p>
+			</div>
+			
+			<div class="mt-8 space-y-4">
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					@components.Button("Go Home", "primary", "/")
+					<button onclick="history.back()" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-medium rounded-md transition-colors duration-200">
+						Go Back
+					</button>
+				</div>
+				
+				<div class="mt-6">
+					<p class="text-sm text-gray-500">
+						If you believe this is an error, please 
+						<a href="/contact" class="text-indigo-600 hover:text-indigo-500 underline">contact support</a>.
+					</p>
+				</div>
+			</div>
+			
+			<div class="mt-8">
+				<h3 class="text-lg font-medium text-gray-900 mb-4">Helpful Links</h3>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+					<a href="/" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						🏠 Homepage
+					</a>
+					<a href="/login" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						🔐 Login
+					</a>
+					<a href="/register" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						📝 Register
+					</a>
+					<a href="/help" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						❓ Help Center
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// Error500Page renders the 500 Internal Server Error page
+templ Error500Page() {
+	@layouts.Base("Server Error - Go Templ Template", Error500Content())
+}
+
+// Error500Content renders the content for 500 error page
+templ Error500Content() {
+	<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8 text-center">
+			<div>
+				<div class="mx-auto h-32 w-32 text-red-600">
+					<svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+					</svg>
+				</div>
+				<h1 class="mt-6 text-6xl font-bold text-gray-900">500</h1>
+				<h2 class="mt-2 text-3xl font-bold text-gray-900">Server Error</h2>
+				<p class="mt-4 text-lg text-gray-600">
+					Oops! Something went wrong on our end. We're working to fix this issue as quickly as possible.
+				</p>
+			</div>
+			
+			<div class="mt-8 space-y-4">
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<button onclick="location.reload()" class="inline-flex items-center justify-center px-4 py-2 border border-transparent bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-medium rounded-md transition-colors duration-200">
+						Try Again
+					</button>
+					@components.Button("Go Home", "secondary", "/")
+				</div>
+				
+				<div class="mt-6">
+					<p class="text-sm text-gray-500">
+						If this problem persists, please 
+						<a href="/contact" class="text-indigo-600 hover:text-indigo-500 underline">contact our support team</a>.
+					</p>
+				</div>
+			</div>
+			
+			<div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+				<div class="flex">
+					<div class="flex-shrink-0">
+						<svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+						</svg>
+					</div>
+					<div class="ml-3">
+						<h3 class="text-sm font-medium text-yellow-800">
+							What you can do:
+						</h3>
+						<div class="mt-2 text-sm text-yellow-700">
+							<ul class="list-disc list-inside space-y-1">
+								<li>Wait a few minutes and try again</li>
+								<li>Check if the issue persists on other pages</li>
+								<li>Clear your browser cache and cookies</li>
+								<li>Contact support if the problem continues</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// ErrorAuthPage renders the authentication error page
+templ ErrorAuthPage() {
+	@layouts.Base("Authentication Required - Go Templ Template", ErrorAuthContent())
+}
+
+// ErrorAuthContent renders the content for authentication error page
+templ ErrorAuthContent() {
+	<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8 text-center">
+			<div>
+				<div class="mx-auto h-32 w-32 text-amber-600">
+					<svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+					</svg>
+				</div>
+				<h1 class="mt-6 text-6xl font-bold text-gray-900">401</h1>
+				<h2 class="mt-2 text-3xl font-bold text-gray-900">Authentication Required</h2>
+				<p class="mt-4 text-lg text-gray-600">
+					You need to be logged in to access this page. Please sign in to continue.
+				</p>
+			</div>
+			
+			<div class="mt-8 space-y-4">
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					@components.Button("Sign In", "primary", "/login")
+					@components.Button("Create Account", "secondary", "/register")
+				</div>
+				
+				<div class="mt-6">
+					<p class="text-sm text-gray-500">
+						Don't have an account? 
+						<a href="/register" class="text-indigo-600 hover:text-indigo-500 underline">Sign up for free</a>.
+					</p>
+				</div>
+			</div>
+			
+			<div class="mt-8 bg-blue-50 border border-blue-200 rounded-md p-4">
+				<div class="flex">
+					<div class="flex-shrink-0">
+						<svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+						</svg>
+					</div>
+					<div class="ml-3">
+						<h3 class="text-sm font-medium text-blue-800">
+							Why do I need to sign in?
+						</h3>
+						<div class="mt-2 text-sm text-blue-700">
+							<p>
+								This page contains personalized content or requires authentication to ensure security and provide you with the best experience.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="mt-6">
+				<h3 class="text-lg font-medium text-gray-900 mb-4">Quick Access</h3>
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+					<a href="/" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						🏠 Homepage
+					</a>
+					<a href="/about" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						ℹ️ About Us
+					</a>
+					<a href="/help" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						❓ Help Center
+					</a>
+					<a href="/contact" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+						📧 Contact Support
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// ErrorForbiddenPage renders the 403 Forbidden error page
+templ ErrorForbiddenPage() {
+	@layouts.Base("Access Forbidden - Go Templ Template", ErrorForbiddenContent())
+}
+
+// ErrorForbiddenContent renders the content for 403 error page
+templ ErrorForbiddenContent() {
+	<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8 text-center">
+			<div>
+				<div class="mx-auto h-32 w-32 text-red-600">
+					<svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+					</svg>
+				</div>
+				<h1 class="mt-6 text-6xl font-bold text-gray-900">403</h1>
+				<h2 class="mt-2 text-3xl font-bold text-gray-900">Access Forbidden</h2>
+				<p class="mt-4 text-lg text-gray-600">
+					You don't have permission to access this resource. Please contact an administrator if you believe this is an error.
+				</p>
+			</div>
+			
+			<div class="mt-8 space-y-4">
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					@components.Button("Go Home", "primary", "/")
+					<button onclick="history.back()" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-medium rounded-md transition-colors duration-200">
+						Go Back
+					</button>
+				</div>
+				
+				<div class="mt-6">
+					<p class="text-sm text-gray-500">
+						Need help? 
+						<a href="/contact" class="text-indigo-600 hover:text-indigo-500 underline">Contact our support team</a>.
+					</p>
+				</div>
+			</div>
+			
+			<div class="mt-8 bg-red-50 border border-red-200 rounded-md p-4">
+				<div class="flex">
+					<div class="flex-shrink-0">
+						<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+							<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+						</svg>
+					</div>
+					<div class="ml-3">
+						<h3 class="text-sm font-medium text-red-800">
+							Possible reasons:
+						</h3>
+						<div class="mt-2 text-sm text-red-700">
+							<ul class="list-disc list-inside space-y-1">
+								<li>You don't have the required permissions</li>
+								<li>Your account may be suspended or restricted</li>
+								<li>The resource requires a higher access level</li>
+								<li>You may need to log in with a different account</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// GenericErrorPage renders a generic error page with custom message
+templ GenericErrorPage(title, message, code string) {
+	@layouts.Base(title + " - Go Templ Template", GenericErrorContent(title, message, code))
+}
+
+// GenericErrorContent renders the content for generic error page
+templ GenericErrorContent(title, message, code string) {
+	<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-md w-full space-y-8 text-center">
+			<div>
+				<div class="mx-auto h-32 w-32 text-gray-600">
+					<svg class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+				</div>
+				if code != "" {
+					<h1 class="mt-6 text-6xl font-bold text-gray-900">{ code }</h1>
+				}
+				<h2 class="mt-2 text-3xl font-bold text-gray-900">{ title }</h2>
+				<p class="mt-4 text-lg text-gray-600">
+					{ message }
+				</p>
+			</div>
+			
+			<div class="mt-8 space-y-4">
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					@components.Button("Go Home", "primary", "/")
+					<button onclick="history.back()" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm font-medium rounded-md transition-colors duration-200">
+						Go Back
+					</button>
+				</div>
+				
+				<div class="mt-6">
+					<p class="text-sm text-gray-500">
+						If you need assistance, please 
+						<a href="/contact" class="text-indigo-600 hover:text-indigo-500 underline">contact support</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+}
