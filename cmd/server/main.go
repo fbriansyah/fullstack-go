@@ -16,6 +16,8 @@ import (
 	"go-templ-template/internal/shared"
 	"go-templ-template/internal/shared/database"
 	"go-templ-template/internal/shared/events"
+	"go-templ-template/internal/shared/handlers"
+	errorMiddleware "go-templ-template/internal/shared/middleware"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -88,10 +90,21 @@ func NewApp(cfg *config.Config) (*App, error) {
 	router.HideBanner = true
 	router.HidePort = true
 
+	// Configure error handling
+	errorConfig := errorMiddleware.DefaultErrorHandlerConfig()
+	if cfg.Server.Env == "development" {
+		errorConfig.ShowStackTrace = true
+	}
+
 	// Add middleware
 	router.Use(middleware.Logger())
-	router.Use(middleware.Recover())
+	router.Use(errorMiddleware.RecoveryHandler(errorConfig))
+	router.Use(errorMiddleware.ErrorHandler(errorConfig))
 	router.Use(middleware.CORS())
+
+	// Set up error page routing
+	errorRouter := handlers.NewErrorPageRouter()
+	errorRouter.RegisterRoutes(router)
 
 	// Create database manager
 	migrationsPath := "migrations"
